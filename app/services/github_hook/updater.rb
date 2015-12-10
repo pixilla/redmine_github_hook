@@ -154,12 +154,17 @@ module GithubHook
 
     # Fetches updates from the remote repository
     def update_repository(repository)
-      command = git_command("--git-dir #{repository.url} fetch origin")
+      command = git_command("--git-dir \"#{repository.url}\" fetch origin")
       fetch = exec(command, repository.url)
       return nil unless fetch
 
       command = git_command(
-        "--git-dir #{repository.url} fetch --prune origin \"+refs/heads/*:refs/remotes/origin/*\""
+        "--git-dir \"#{repository.url}\" fetch --prune origin \"+refs/heads/*:refs/remotes/origin/*\""
+      )
+      exec(command, repository.url)
+
+      command = git_command(
+        "--git-dir \"#{repository.url}\" reset --hard origin/master"
       )
       exec(command, repository.url)
     end
